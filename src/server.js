@@ -1,0 +1,60 @@
+/**
+ * Arquivo principal do servidor Express.
+ * Configura o servidor, middlewares, rotas e inicia a aplicação.
+ * Responsável por inicializar a API e gerenciar requisições HTTP.
+ */
+
+import express from "express"; // Framework web para Node.js, usado para criar o servidor e gerenciar rotas
+import cors from "cors"; // Middleware para permitir requisições de origens diferentes (Cross-Origin Resource Sharing)
+import helmet from "helmet"; // Middleware de segurança que define headers HTTP seguros
+import morgan from "morgan"; // Middleware de logging para registrar requisições HTTP
+import rateLimit from "express-rate-limit"; // Middleware para limitar o número de requisições por IP, prevenindo abusos
+import dotenv from "dotenv"; // Carrega variáveis de ambiente do arquivo .env
+import authRoutes from "./routes/auth.js"; // Rotas de autenticação importadas do módulo auth
+import donationRoutes from "./routes/donations.js"; // Rotas de doações
+import requestRoutes from "./routes/requests.js"; // Rotas de requisições de doações
+
+dotenv.config(); // Carrega as variáveis de ambiente
+
+const app = express(); // Cria uma instância do aplicativo Express
+const PORT = process.env.PORT || 3000; // Porta do servidor, definida pela variável de ambiente ou padrão 3000
+
+// Middlewares aplicados a todas as rotas
+app.use(helmet()); // Aplica headers de segurança para proteger contra vulnerabilidades comuns
+app.use(cors()); // Permite requisições de diferentes origens, essencial para APIs públicas
+app.use(morgan("combined")); // Registra logs detalhados das requisições no console
+app.use(express.json()); // Parseia corpos de requisição JSON
+app.use(express.urlencoded({ extended: true })); // Parseia corpos de requisição URL-encoded
+
+// Rate limiting - Limita requisições para prevenir ataques DDoS ou abuso
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // Janela de 15 minutos
+  max: 100, // Máximo 100 requisições por IP nessa janela
+});
+app.use(limiter); // Aplica o rate limiting globalmente
+
+// Rotas - Define prefixos para grupos de rotas
+app.use("/api/auth", authRoutes); // Rotas de autenticação com prefixo /api/auth
+app.use("/api/donations", donationRoutes); // Rotas de doações com prefixo /api/donations
+app.use("/api/requests", requestRoutes); // Rotas de requisições com prefixo /api/requests
+
+// Rota de health check - Verifica se a API está funcionando
+app.get("/health", (req, res) => {
+  res.json({ status: "OK", message: "API is running" });
+});
+
+// Middleware de tratamento de erros - Captura erros não tratados e retorna resposta padronizada
+app.use((err, req, res, next) => {
+  console.error(err.stack); // Loga o erro no console para debugging
+  res.status(500).json({ message: "Something went wrong!" }); // Resposta genérica de erro
+});
+
+// Middleware para rotas não encontradas (404)
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" }); // Resposta para rotas inexistentes
+});
+
+// Inicia o servidor na porta especificada
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
