@@ -12,14 +12,31 @@ class User {
    * @param {Object} userData - {name, email, password}
    * @returns {Object} Dados do usuário criado
    */
-  static async create({ name, email, password }) {
+  // static async create({ name, email, password }) {
+  //   const query = `
+  //     INSERT INTO users (name, email, password)
+  //     VALUES ($1, $2, $3)
+  //     RETURNING id, name, email, created_at
+  //   `;
+  //   try {
+  //     const result = await pool.query(query, [name, email, password]);
+  //     return result.rows[0];
+  //   } catch (error) {
+  //     console.error("Erro ao criar usuário:", error.message);
+  //     throw error;
+  //   }
+  // }
+
+  static async create({ name, email, password }, client) {
     const query = `
-      INSERT INTO users (name, email, password)
-      VALUES ($1, $2, $3)
-      RETURNING id, name, email, created_at
-    `;
+    INSERT INTO users (name, email, password)
+    VALUES ($1, $2, $3)
+    RETURNING id, name, email, created_at
+  `;
+
     try {
-      const result = await pool.query(query, [name, email, password]);
+      const db = client || pool; // 🔥 usa client se existir
+      const result = await db.query(query, [name, email, password]);
       return result.rows[0];
     } catch (error) {
       console.error("Erro ao criar usuário:", error.message);

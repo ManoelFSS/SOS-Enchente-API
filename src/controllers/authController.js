@@ -6,6 +6,8 @@
 
 import User from "../models/User.js"; // Modelo de usuário para operações no banco
 import { hashPassword, verifyPassword, generateToken } from "../utils/auth.js"; // Utilitários de auth
+import pool from "../config/database.js";
+
 
 /**
  * Controller para registro de novos usuários.

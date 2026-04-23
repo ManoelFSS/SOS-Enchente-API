@@ -12,7 +12,7 @@ import rateLimit from "express-rate-limit"; // Middleware para limitar o número
 import dotenv from "dotenv"; // Carrega variáveis de ambiente do arquivo .env
 import authRoutes from "./routes/auth.js"; // Rotas de autenticação importadas do módulo auth
 import donationRoutes from "./routes/donations.js"; // Rotas de doações
-import requestRoutes from "./routes/requests.js"; // Rotas de requisições de doações
+import pedidoRoutes from "./routes/pedidos.js"; // Rotas de pedidos de doações
 
 dotenv.config(); // Carrega as variáveis de ambiente
 
@@ -36,7 +36,7 @@ app.use(limiter); // Aplica o rate limiting globalmente
 // Rotas - Define prefixos para grupos de rotas (simplificados)
 app.use("/auth", authRoutes); // Rotas de autenticação
 app.use("/donations", donationRoutes); // Rotas de doações
-app.use("/requests", requestRoutes); // Rotas de requisições
+app.use("/pedidos", pedidoRoutes); // Rotas de pedidos de doações
 
 // Rota raiz para confirmar que o serviço está ativo
 app.get("/", (req, res) => {
@@ -79,9 +79,18 @@ app.get("/health/db", async (req, res) => {
 });
 
 // Middleware de tratamento de erros - Captura erros não tratados e retorna resposta padronizada
+// app.use((err, req, res, next) => {
+//   console.error(err.stack); // Loga o erro no console para debugging
+//   res.status(500).json({ message: "Something went wrong!" }); // Resposta genérica de erro
+// });
+
 app.use((err, req, res, next) => {
-  console.error(err.stack); // Loga o erro no console para debugging
-  res.status(500).json({ message: "Something went wrong!" }); // Resposta genérica de erro
+  console.error("GLOBAL ERROR:", err);
+
+  res.status(500).json({
+    message: err.message,
+    stack: err.stack,
+  });
 });
 
 // Middleware para rotas não encontradas (404)

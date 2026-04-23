@@ -294,12 +294,12 @@ Authorization: Bearer <seu_token_aqui>
 
 ---
 
-## 3. TESTES DE REQUISIÇÕES DE DOAÇÃO
+## 3. TESTES DE PEDIDOS DE DOAÇÃO
 
-### 3.1 Criar uma Requisição
+### 3.1 Criar um Pedido
 
 **Método:** POST
-**URL:** `http://localhost:3000/requests`
+**URL:** `http://localhost:3000/pedidos`
 **Headers:**
 
 ```
@@ -345,10 +345,10 @@ Content-Type: application/json
 }
 ```
 
-### 3.2 Listar todas as Requisições
+### 3.2 Listar todos os Pedidos
 
 **Método:** GET
-**URL:** `http://localhost:3000/requests`
+**URL:** `http://localhost:3000/pedidos`
 
 **Query Parameters opcionais:**
 
@@ -372,10 +372,10 @@ http://localhost:3000/requests?urgency=critical&city=Porto Alegre
 }
 ```
 
-### 3.3 Listar Requisições Críticas de uma Cidade
+### 3.3 Listar Pedidos Críticos de uma Cidade
 
 **Método:** GET
-**URL:** `http://localhost:3000/requests/critical/Porto Alegre`
+**URL:** `http://localhost:3000/pedidos/critical/Porto Alegre`
 
 **Resposta Esperada (200):**
 
@@ -388,10 +388,10 @@ http://localhost:3000/requests?urgency=critical&city=Porto Alegre
 }
 ```
 
-### 3.4 Obter uma Requisição Específica
+### 3.4 Obter um Pedido Específico
 
 **Método:** GET
-**URL:** `http://localhost:3000/requests/1`
+**URL:** `http://localhost:3000/pedidos/1`
 
 **Resposta Esperada (200):**
 
@@ -413,10 +413,10 @@ http://localhost:3000/requests?urgency=critical&city=Porto Alegre
 }
 ```
 
-### 3.5 Listar minhas Requisições
+### 3.5 Listar meus Pedidos
 
 **Método:** GET
-**URL:** `http://localhost:3000/requests/my-requests`
+**URL:** `http://localhost:3000/pedidos/my-pedidos`
 **Headers:**
 
 ```
