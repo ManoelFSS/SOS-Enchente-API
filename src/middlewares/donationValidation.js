@@ -54,6 +54,7 @@ export const validateDonationUpdate = (req, res, next) => {
     quantity: Joi.string().min(1).max(100),
     photo_url: Joi.string().uri(),
     status: Joi.string().valid("available", "unavailable", "completed"),
+    city: Joi.string().min(2).max(100),
   }).min(1);
 
   const { error } = schema.validate(req.body);

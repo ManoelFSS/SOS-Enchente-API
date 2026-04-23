@@ -95,13 +95,14 @@ export const updateDonation = async (req, res) => {
   try {
     const { id } = req.params;
     const user_id = req.user.id;
-    const { category, description, quantity, photo_url, status } = req.body;
+    const { category, description, quantity, photo_url, status, city } = req.body;
 
     const updatedDonation = await Donation.update(id, user_id, {
       category,
       description,
       quantity,
       photo_url,
+      city,
       status,
     });
 
