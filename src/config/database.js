@@ -13,13 +13,21 @@ const { Pool } = pkg;
 
 // Cria pool de conexões usando DATABASE_URL
 // No Render, DATABASE_URL é fornecido automaticamente
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl:
+//     process.env.NODE_ENV === "production"
+//       ? { rejectUnauthorized: false }
+//       : false,
+// });
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl:
-    process.env.NODE_ENV === "production"
-      ? { rejectUnauthorized: false }
-      : false,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
+
 
 // Event listeners para monitorar a conexão
 pool.on("connect", () => {
