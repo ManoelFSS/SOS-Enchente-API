@@ -15,7 +15,7 @@ import Donation from "../models/Donation.js";
  */
 export const createDonation = async (req, res) => {
   try {
-    const { category, description, quantity, photo_url, city } = req.body;
+    const { category, description, quantity, photo_url, city, cep, status } = req.body;
     const user_id = req.user.id; // ID do usuário autenticado
 
     const donation = await Donation.create({
@@ -25,6 +25,7 @@ export const createDonation = async (req, res) => {
       quantity,
       photo_url,
       city,
+      cep,
       status: "available", // Status inicial da doação
     });
 
@@ -95,7 +96,7 @@ export const updateDonation = async (req, res) => {
   try {
     const { id } = req.params;
     const user_id = req.user.id;
-    const { category, description, quantity, photo_url, status, city } = req.body;
+    const { category, description, quantity, photo_url, status, city, status, cep } = req.body;
 
     const updatedDonation = await Donation.update(id, user_id, {
       category,
@@ -104,6 +105,7 @@ export const updateDonation = async (req, res) => {
       photo_url,
       city,
       status,
+      cep,
     });
 
     if (!updatedDonation) {

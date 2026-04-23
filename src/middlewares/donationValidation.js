@@ -23,6 +23,7 @@ export const validateDonation = (req, res, next) => {
     quantity: Joi.string().min(1).max(100).required(),
     photo_url: Joi.string().uri().required(),
     city: Joi.string().min(2).max(100).required(),
+    cep: Joi.string().min(5).max(20).required(),
   });
 
   const { error } = schema.validate(req.body);
@@ -55,6 +56,7 @@ export const validateDonationUpdate = (req, res, next) => {
     photo_url: Joi.string().uri(),
     status: Joi.string().valid("available", "unavailable", "completed"),
     city: Joi.string().min(2).max(100),
+    cep: Joi.string().min(5).max(20),
   }).min(1);
 
   const { error } = schema.validate(req.body);
@@ -81,6 +83,7 @@ export const validateRequest = (req, res, next) => {
     quantity: Joi.string().min(1).max(100).required(),
     urgency: Joi.string().valid("low", "medium", "high", "critical").required(),
     city: Joi.string().min(2).max(100).required(),
+    cep: Joi.string().min(5).max(20).required(),
   });
 
   const { error } = schema.validate(req.body);
@@ -113,6 +116,7 @@ export const validateRequestUpdate = (req, res, next) => {
     urgency: Joi.string().valid("low", "medium", "high", "critical"),
     status: Joi.string().valid("open", "matched", "completed", "cancelled"),
     city: Joi.string().min(2).max(100),
+    cep: Joi.string().min(5).max(20),
   }).min(1);
 
   const { error } = schema.validate(req.body);
