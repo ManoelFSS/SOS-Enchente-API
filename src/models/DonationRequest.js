@@ -20,13 +20,14 @@ class DonationRequest {
       quantity,
       urgency,
       city,
+      cep,
       status = "open",
     } = requestData;
 
     const query = `
-      INSERT INTO donation_requests (user_id, category, description, quantity, urgency, city, status, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
-      RETURNING id, user_id, category, description, quantity, urgency, city, status, created_at
+      INSERT INTO donation_requests (user_id, category, description, quantity, urgency, city, cep, status, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+      RETURNING id, user_id, category, description, quantity, urgency, city, cep, status, created_at
     `;
 
     try {
@@ -37,6 +38,7 @@ class DonationRequest {
         quantity,
         urgency,
         city,
+        cep,
         status,
       ]);
       return result.rows[0];
@@ -54,7 +56,7 @@ class DonationRequest {
   static async findAll(filters = {}) {
     let query = `
       SELECT r.id, r.user_id, u.name as requester_name, r.category, r.description,
-             r.quantity, r.urgency, r.city, r.status, r.created_at
+             r.quantity, r.urgency, r.city, r.cep, r.status, r.created_at
       FROM donation_requests r
       JOIN users u ON r.user_id = u.id
       WHERE 1=1
@@ -105,7 +107,7 @@ class DonationRequest {
   static async findById(id) {
     const query = `
       SELECT r.id, r.user_id, u.name as requester_name, u.email as requester_email,
-             r.category, r.description, r.quantity, r.urgency, r.city, r.status, r.created_at
+             r.category, r.description, r.quantity, r.urgency, r.city, r.cep, r.status, r.created_at
       FROM donation_requests r
       JOIN users u ON r.user_id = u.id
       WHERE r.id = $1
@@ -135,7 +137,7 @@ class DonationRequest {
         return null;
       }
 
-      const { category, description, quantity, urgency, status, city } = updateData;
+      const { category, description, quantity, urgency, status, city, cep } = updateData;
       const query = `
         UPDATE donation_requests
         SET category = COALESCE($1, category),
@@ -143,9 +145,10 @@ class DonationRequest {
             quantity = COALESCE($3, quantity),
             urgency = COALESCE($4, urgency),
             status = COALESCE($5, status),
-            city = COALESCE($6, city)
-        WHERE id = $7
-        RETURNING id, user_id, category, description, quantity, urgency, city, status, created_at
+            city = COALESCE($6, city),
+            cep = COALESCE($7, cep)
+        WHERE id = $8
+        RETURNING id, user_id, category, description, quantity, urgency, city, cep, status, created_at
       `;
 
       const result = await pool.query(query, [
@@ -155,6 +158,7 @@ class DonationRequest {
         urgency,
         status,
         city,
+        cep,
         id,
       ]);
       return result.rows[0];
@@ -194,7 +198,7 @@ class DonationRequest {
    */
   static async findByUserId(user_id) {
     const query = `
-      SELECT id, user_id, category, description, quantity, urgency, city, status, created_at
+      SELECT id, user_id, category, description, quantity, urgency, city, cep, status, created_at
       FROM donation_requests
       WHERE user_id = $1
       ORDER BY created_at DESC
@@ -218,7 +222,7 @@ class DonationRequest {
   static async findByCritical(urgency, city) {
     const query = `
       SELECT r.id, r.user_id, u.name as requester_name, r.category, r.description,
-             r.quantity, r.urgency, r.city, r.status, r.created_at
+             r.quantity, r.urgency, r.city, r.cep, r.status, r.created_at
       FROM donation_requests r
       JOIN users u ON r.user_id = u.id
       WHERE r.urgency = $1 AND r.city ILIKE $2 AND r.status = 'open'

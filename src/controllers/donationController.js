@@ -15,7 +15,7 @@ import Donation from "../models/Donation.js";
  */
 export const createDonation = async (req, res) => {
   try {
-    const { category, description, quantity, photo_url, city, cep, status } = req.body;
+    const { category, description, quantity, photo_url, city, cep  } = req.body;
     const user_id = req.user.id; // ID do usuário autenticado
 
     const donation = await Donation.create({
