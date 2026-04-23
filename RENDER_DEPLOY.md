@@ -109,12 +109,15 @@ curl -X POST https://sos-enchente-api.onrender.com/donations \
 
 Substitua `https://sos-enchente-api.onrender.com` nos seus testes:
 
-- **Cadastro**: `POST /auth/register`
-- **Login**: `POST /auth/login`
-- **Perfil**: `GET /auth/profile`
-- **Doações**: `POST /donations`, `GET /donations`
-- **Requisições**: `POST /requests`, `GET /requests`
-- **Health**: `GET /health`
+- **Cadastro**: `POST https://sos-enchente-api.onrender.com/auth/register`
+- **Login**: `POST https://sos-enchente-api.onrender.com/auth/login`
+- **Perfil**: `GET https://sos-enchente-api.onrender.com/auth/profile`
+- **Doações**: `POST https://sos-enchente-api.onrender.com/donations`, `GET https://sos-enchente-api.onrender.com/donations`
+- **Requisições**: `POST https://sos-enchente-api.onrender.com/requests`, `GET https://sos-enchente-api.onrender.com/requests`
+- **Health**: `GET https://sos-enchente-api.onrender.com/health`
+- **Root**: `GET https://sos-enchente-api.onrender.com/`
+
+> Se você receber `Route not found` em `/auth/register`, pode ser porque o Render ainda está usando uma versão antiga do código. Faça push para a branch configurada no Render e execute um novo deploy.
 
 ---
 

@@ -38,6 +38,11 @@ app.use("/auth", authRoutes); // Rotas de autenticação
 app.use("/donations", donationRoutes); // Rotas de doações
 app.use("/requests", requestRoutes); // Rotas de requisições
 
+// Rota raiz para confirmar que o serviço está ativo
+app.get("/", (req, res) => {
+  res.json({ status: "OK", message: "SOS Enchente API is running" });
+});
+
 // Rota de health check - Verifica se a API está funcionando
 app.get("/health", (req, res) => {
   res.json({ status: "OK", message: "API is running" });
