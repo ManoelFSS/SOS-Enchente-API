@@ -1,7 +1,6 @@
 /**
  * Model para Doações.
- * Gerencia operações CRUD de doações no banco de dados.
- * Doações são itens oferecidos por usuários para ajudar pessoas em situação de risco.
+ * Gerencia operações CRUD de doações no banco de dados PostgreSQL.
  */
 
 import pool from "../config/database.js";
@@ -9,7 +8,6 @@ import pool from "../config/database.js";
 class Donation {
   /**
    * Cria uma nova doação no banco.
-   * Registra o que está sendo doado, quantidade, categoria e foto.
    * @param {Object} donationData - {user_id, category, description, quantity, photo_url, city, status}
    * @returns {Object} Doação criada com ID
    */
@@ -21,35 +19,40 @@ class Donation {
       quantity,
       photo_url,
       city,
-      status,
+      status = "available",
     } = donationData;
+
     const query = `
       INSERT INTO donations (user_id, category, description, quantity, photo_url, city, status, created_at)
       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
       RETURNING id, user_id, category, description, quantity, photo_url, city, status, created_at
     `;
-    const values = [
-      user_id,
-      category,
-      description,
-      quantity,
-      photo_url,
-      city,
-      status,
-    ];
-    const result = await pool.query(query, values);
-    return result.rows[0];
+
+    try {
+      const result = await pool.query(query, [
+        user_id,
+        category,
+        description,
+        quantity,
+        photo_url,
+        city,
+        status,
+      ]);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Erro ao criar doação:", error.message);
+      throw error;
+    }
   }
 
   /**
-   * Lista todas as doações disponíveis com filtros opcionais.
-   * Pode filtrar por categoria, cidade ou status.
+   * Lista todas as doações com filtros opcionais.
    * @param {Object} filters - {category, city, status}
    * @returns {Array} Lista de doações
    */
   static async findAll(filters = {}) {
     let query = `
-      SELECT d.id, d.user_id, u.name as donor_name, d.category, d.description, 
+      SELECT d.id, d.user_id, u.name as donor_name, d.category, d.description,
              d.quantity, d.photo_url, d.city, d.status, d.created_at
       FROM donations d
       JOIN users u ON d.user_id = u.id
@@ -78,8 +81,13 @@ class Donation {
 
     query += ` ORDER BY d.created_at DESC`;
 
-    const result = await pool.query(query, values);
-    return result.rows;
+    try {
+      const result = await pool.query(query, values);
+      return result.rows;
+    } catch (error) {
+      console.error("Erro ao listar doações:", error.message);
+      throw error;
+    }
   }
 
   /**
@@ -89,67 +97,86 @@ class Donation {
    */
   static async findById(id) {
     const query = `
-      SELECT d.id, d.user_id, u.name as donor_name, u.email as donor_email, 
+      SELECT d.id, d.user_id, u.name as donor_name, u.email as donor_email,
              d.category, d.description, d.quantity, d.photo_url, d.city, d.status, d.created_at
       FROM donations d
       JOIN users u ON d.user_id = u.id
       WHERE d.id = $1
     `;
-    const result = await pool.query(query, [id]);
-    return result.rows[0];
+
+    try {
+      const result = await pool.query(query, [id]);
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error("Erro ao buscar doação:", error.message);
+      throw error;
+    }
   }
 
   /**
    * Atualiza uma doação existente.
-   * Apenas o doador pode atualizar sua doação.
    * @param {number} id - ID da doação
-   * @param {number} user_id - ID do usuário (para verificação de autorização)
+   * @param {number} user_id - ID do usuário (verificação)
    * @param {Object} updateData - Dados a atualizar
    * @returns {Object|null} Doação atualizada ou null
    */
   static async update(id, user_id, updateData) {
-    // Verifica se a doação pertence ao usuário
+    // Verifica se pertence ao usuário
     const checkQuery = `SELECT user_id FROM donations WHERE id = $1`;
-    const checkResult = await pool.query(checkQuery, [id]);
+    try {
+      const checkResult = await pool.query(checkQuery, [id]);
+      if (!checkResult.rows[0] || checkResult.rows[0].user_id !== user_id) {
+        return null;
+      }
 
-    if (!checkResult.rows[0] || checkResult.rows[0].user_id !== user_id) {
-      return null;
+      const { category, description, quantity, photo_url, status } = updateData;
+      const query = `
+        UPDATE donations
+        SET category = COALESCE($1, category),
+            description = COALESCE($2, description),
+            quantity = COALESCE($3, quantity),
+            photo_url = COALESCE($4, photo_url),
+            status = COALESCE($5, status)
+        WHERE id = $6
+        RETURNING id, user_id, category, description, quantity, photo_url, city, status, created_at
+      `;
+
+      const result = await pool.query(query, [
+        category,
+        description,
+        quantity,
+        photo_url,
+        status,
+        id,
+      ]);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Erro ao atualizar doação:", error.message);
+      throw error;
     }
-
-    const { category, description, quantity, photo_url, status } = updateData;
-    const query = `
-      UPDATE donations
-      SET category = COALESCE($1, category),
-          description = COALESCE($2, description),
-          quantity = COALESCE($3, quantity),
-          photo_url = COALESCE($4, photo_url),
-          status = COALESCE($5, status)
-      WHERE id = $6
-      RETURNING id, user_id, category, description, quantity, photo_url, city, status, created_at
-    `;
-    const values = [category, description, quantity, photo_url, status, id];
-    const result = await pool.query(query, values);
-    return result.rows[0];
   }
 
   /**
    * Deleta uma doação.
-   * Apenas o doador pode deletar sua doação.
    * @param {number} id - ID da doação
    * @param {number} user_id - ID do usuário
-   * @returns {boolean} True se deletado, false caso contrário
+   * @returns {boolean} True se deletado
    */
   static async delete(id, user_id) {
     const checkQuery = `SELECT user_id FROM donations WHERE id = $1`;
-    const checkResult = await pool.query(checkQuery, [id]);
+    try {
+      const checkResult = await pool.query(checkQuery, [id]);
+      if (!checkResult.rows[0] || checkResult.rows[0].user_id !== user_id) {
+        return false;
+      }
 
-    if (!checkResult.rows[0] || checkResult.rows[0].user_id !== user_id) {
-      return false;
+      const deleteQuery = `DELETE FROM donations WHERE id = $1`;
+      await pool.query(deleteQuery, [id]);
+      return true;
+    } catch (error) {
+      console.error("Erro ao deletar doação:", error.message);
+      throw error;
     }
-
-    const query = `DELETE FROM donations WHERE id = $1`;
-    await pool.query(query, [id]);
-    return true;
   }
 
   /**
@@ -164,8 +191,14 @@ class Donation {
       WHERE user_id = $1
       ORDER BY created_at DESC
     `;
-    const result = await pool.query(query, [user_id]);
-    return result.rows;
+
+    try {
+      const result = await pool.query(query, [user_id]);
+      return result.rows;
+    } catch (error) {
+      console.error("Erro ao buscar doações do usuário:", error.message);
+      throw error;
+    }
   }
 }
 

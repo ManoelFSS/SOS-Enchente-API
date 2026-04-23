@@ -12,10 +12,9 @@ Este guia ajuda você a testar todos os endpoints da API usando ferramentas como
 
 2. A API estará disponível em: `http://localhost:3000`
 
-3. Para testar os endpoints, você precisa ter criado as tabelas no banco:
-   ```bash
-   psql -U seu_usuario -d seu_banco -f database/init.sql
-   ```
+3. **Para testes locais:** A API agora usa SQLite automaticamente. Não é necessário configurar PostgreSQL/Supabase para testes básicos.
+
+4. **Para produção:** Configure a variável `DATABASE_URL` no arquivo `.env` para apontar para seu banco PostgreSQL ou Supabase.
 
 ---
 
@@ -24,7 +23,7 @@ Este guia ajuda você a testar todos os endpoints da API usando ferramentas como
 ### 1.1 Registrar um novo usuário
 
 **Método:** POST
-**URL:** `http://localhost:3000/api/auth/register`
+**URL:** `http://localhost:3000/auth/register`
 **Headers:**
 
 ```
@@ -58,7 +57,7 @@ Content-Type: application/json
 ### 1.2 Fazer login
 
 **Método:** POST
-**URL:** `http://localhost:3000/api/auth/login`
+**URL:** `http://localhost:3000/auth/login`
 **Headers:**
 
 ```
@@ -88,7 +87,7 @@ Content-Type: application/json
 ### 1.3 Obter Perfil
 
 **Método:** GET
-**URL:** `http://localhost:3000/api/auth/profile`
+**URL:** `http://localhost:3000/auth/profile`
 **Headers:**
 
 ```
@@ -115,7 +114,7 @@ Authorization: Bearer <seu_token_aqui>
 ### 2.1 Criar uma Doação
 
 **Método:** POST
-**URL:** `http://localhost:3000/api/donations`
+**URL:** `http://localhost:3000/donations`
 **Headers:**
 
 ```
@@ -166,7 +165,7 @@ Content-Type: application/json
 ### 2.2 Listar todas as Doações
 
 **Método:** GET
-**URL:** `http://localhost:3000/api/donations`
+**URL:** `http://localhost:3000/donations`
 
 **Query Parameters opcionais:**
 
@@ -177,7 +176,7 @@ Content-Type: application/json
 **Exemplo completo:**
 
 ```
-http://localhost:3000/api/donations?category=medicine&city=Porto Alegre
+http://localhost:3000/donations?category=medicine&city=Porto Alegre
 ```
 
 **Resposta Esperada (200):**
@@ -205,7 +204,7 @@ http://localhost:3000/api/donations?category=medicine&city=Porto Alegre
 ### 2.3 Listar minhas Doações
 
 **Método:** GET
-**URL:** `http://localhost:3000/api/donations/my-donations`
+**URL:** `http://localhost:3000/donations/my-donations`
 **Headers:**
 
 ```
@@ -224,7 +223,7 @@ Authorization: Bearer <seu_token_aqui>
 ### 2.4 Obter uma Doação Específica
 
 **Método:** GET
-**URL:** `http://localhost:3000/api/donations/1`
+**URL:** `http://localhost:3000/donations/1`
 
 **Resposta Esperada (200):**
 
@@ -249,7 +248,7 @@ Authorization: Bearer <seu_token_aqui>
 ### 2.5 Atualizar uma Doação
 
 **Método:** PUT
-**URL:** `http://localhost:3000/api/donations/1`
+**URL:** `http://localhost:3000/donations/1`
 **Headers:**
 
 ```
@@ -278,7 +277,7 @@ Content-Type: application/json
 ### 2.6 Deletar uma Doação
 
 **Método:** DELETE
-**URL:** `http://localhost:3000/api/donations/1`
+**URL:** `http://localhost:3000/donations/1`
 **Headers:**
 
 ```
@@ -300,7 +299,7 @@ Authorization: Bearer <seu_token_aqui>
 ### 3.1 Criar uma Requisição
 
 **Método:** POST
-**URL:** `http://localhost:3000/api/requests`
+**URL:** `http://localhost:3000/requests`
 **Headers:**
 
 ```
@@ -349,7 +348,7 @@ Content-Type: application/json
 ### 3.2 Listar todas as Requisições
 
 **Método:** GET
-**URL:** `http://localhost:3000/api/requests`
+**URL:** `http://localhost:3000/requests`
 
 **Query Parameters opcionais:**
 
@@ -361,7 +360,7 @@ Content-Type: application/json
 **Exemplo completo:**
 
 ```
-http://localhost:3000/api/requests?urgency=critical&city=Porto Alegre
+http://localhost:3000/requests?urgency=critical&city=Porto Alegre
 ```
 
 **Resposta Esperada (200):**
@@ -376,7 +375,7 @@ http://localhost:3000/api/requests?urgency=critical&city=Porto Alegre
 ### 3.3 Listar Requisições Críticas de uma Cidade
 
 **Método:** GET
-**URL:** `http://localhost:3000/api/requests/critical/Porto Alegre`
+**URL:** `http://localhost:3000/requests/critical/Porto Alegre`
 
 **Resposta Esperada (200):**
 
@@ -392,7 +391,7 @@ http://localhost:3000/api/requests?urgency=critical&city=Porto Alegre
 ### 3.4 Obter uma Requisição Específica
 
 **Método:** GET
-**URL:** `http://localhost:3000/api/requests/1`
+**URL:** `http://localhost:3000/requests/1`
 
 **Resposta Esperada (200):**
 
@@ -417,7 +416,7 @@ http://localhost:3000/api/requests?urgency=critical&city=Porto Alegre
 ### 3.5 Listar minhas Requisições
 
 **Método:** GET
-**URL:** `http://localhost:3000/api/requests/my-requests`
+**URL:** `http://localhost:3000/requests/my-requests`
 **Headers:**
 
 ```
@@ -436,7 +435,7 @@ Authorization: Bearer <seu_token_aqui>
 ### 3.6 Atualizar uma Requisição
 
 **Método:** PUT
-**URL:** `http://localhost:3000/api/requests/1`
+**URL:** `http://localhost:3000/requests/1`
 **Headers:**
 
 ```
@@ -472,7 +471,7 @@ Content-Type: application/json
 ### 3.7 Deletar uma Requisição
 
 **Método:** DELETE
-**URL:** `http://localhost:3000/api/requests/1`
+**URL:** `http://localhost:3000/requests/1`
 **Headers:**
 
 ```
@@ -514,7 +513,7 @@ Se preferir testar via cURL, aqui estão alguns exemplos:
 ### Registrar
 
 ```bash
-curl -X POST http://localhost:3000/api/auth/register \
+curl -X POST http://localhost:3000/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "name": "João Silva",
@@ -526,7 +525,7 @@ curl -X POST http://localhost:3000/api/auth/register \
 ### Login
 
 ```bash
-curl -X POST http://localhost:3000/api/auth/login \
+curl -X POST http://localhost:3000/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "joao@example.com",
@@ -537,7 +536,7 @@ curl -X POST http://localhost:3000/api/auth/login \
 ### Criar Doação
 
 ```bash
-curl -X POST http://localhost:3000/api/donations \
+curl -X POST http://localhost:3000/donations \
   -H "Authorization: Bearer SEU_TOKEN_AQUI" \
   -H "Content-Type: application/json" \
   -d '{
@@ -552,7 +551,7 @@ curl -X POST http://localhost:3000/api/donations \
 ### Listar Doações
 
 ```bash
-curl http://localhost:3000/api/donations
+curl http://localhost:3000/donations
 ```
 
 ---
