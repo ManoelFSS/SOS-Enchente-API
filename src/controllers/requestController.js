@@ -97,7 +97,7 @@ export const updateRequest = async (req, res) => {
   try {
     const { id } = req.params;
     const user_id = req.user.id;
-    const { category, description, quantity, urgency, status } = req.body;
+    const { category, description, quantity, urgency, status, city } = req.body;
 
     const updatedRequest = await DonationRequest.update(id, user_id, {
       category,
@@ -105,6 +105,7 @@ export const updateRequest = async (req, res) => {
       quantity,
       urgency,
       status,
+      city,
     });
 
     if (!updatedRequest) {

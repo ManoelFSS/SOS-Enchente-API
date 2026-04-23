@@ -135,15 +135,16 @@ class DonationRequest {
         return null;
       }
 
-      const { category, description, quantity, urgency, status } = updateData;
+      const { category, description, quantity, urgency, status, city } = updateData;
       const query = `
         UPDATE donation_requests
         SET category = COALESCE($1, category),
             description = COALESCE($2, description),
             quantity = COALESCE($3, quantity),
             urgency = COALESCE($4, urgency),
-            status = COALESCE($5, status)
-        WHERE id = $6
+            status = COALESCE($5, status),
+            city = COALESCE($6, city)
+        WHERE id = $7
         RETURNING id, user_id, category, description, quantity, urgency, city, status, created_at
       `;
 
@@ -153,6 +154,7 @@ class DonationRequest {
         quantity,
         urgency,
         status,
+        city,
         id,
       ]);
       return result.rows[0];

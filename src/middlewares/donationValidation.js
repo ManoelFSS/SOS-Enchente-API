@@ -112,6 +112,7 @@ export const validateRequestUpdate = (req, res, next) => {
     quantity: Joi.string().min(1).max(100),
     urgency: Joi.string().valid("low", "medium", "high", "critical"),
     status: Joi.string().valid("open", "matched", "completed", "cancelled"),
+    city: Joi.string().min(2).max(100),
   }).min(1);
 
   const { error } = schema.validate(req.body);
