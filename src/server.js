@@ -33,14 +33,44 @@ const limiter = rateLimit({
 });
 app.use(limiter); // Aplica o rate limiting globalmente
 
-// Rotas - Define prefixos para grupos de rotas
-app.use("/api/auth", authRoutes); // Rotas de autenticação com prefixo /api/auth
-app.use("/api/donations", donationRoutes); // Rotas de doações com prefixo /api/donations
-app.use("/api/requests", requestRoutes); // Rotas de requisições com prefixo /api/requests
+// Rotas - Define prefixos para grupos de rotas (simplificados)
+app.use("/auth", authRoutes); // Rotas de autenticação
+app.use("/donations", donationRoutes); // Rotas de doações
+app.use("/requests", requestRoutes); // Rotas de requisições
 
 // Rota de health check - Verifica se a API está funcionando
 app.get("/health", (req, res) => {
   res.json({ status: "OK", message: "API is running" });
+});
+
+// Rota de health check detalhado - Verifica banco de dados
+app.get("/health/db", async (req, res) => {
+  try {
+    // Importa dinamicamente para evitar problemas de inicialização
+    const { testConnection } = await import("./config/database.js");
+    const dbConnected = await testConnection();
+
+    if (dbConnected) {
+      res.json({
+        status: "OK",
+        message: "API and database are running",
+        database: "connected",
+      });
+    } else {
+      res.status(503).json({
+        status: "WARNING",
+        message: "API is running but database is not accessible",
+        database: "disconnected",
+      });
+    }
+  } catch (error) {
+    res.status(503).json({
+      status: "ERROR",
+      message: "Database connection failed",
+      error: error.message,
+      database: "error",
+    });
+  }
 });
 
 // Middleware de tratamento de erros - Captura erros não tratados e retorna resposta padronizada

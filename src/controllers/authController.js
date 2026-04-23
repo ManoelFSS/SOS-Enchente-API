@@ -11,7 +11,7 @@ import { hashPassword, verifyPassword, generateToken } from "../utils/auth.js"; 
  * Controller para registro de novos usuários.
  * Valida se o email já existe, hashea a senha e cria o usuário.
  * Retorna os dados do usuário criado ou erro se já existir.
- * Usado pela rota POST /api/auth/register.
+ * Usado pela rota POST /auth/register.
  * @param {Object} req - Requisição com dados do usuário no body
  * @param {Object} res - Resposta Express
  */
@@ -29,6 +29,16 @@ export const register = async (req, res) => {
 
     res.status(201).json({ message: "User registered successfully", user }); // Sucesso
   } catch (error) {
+    console.error("Register error:", error.message);
+    // Verifica se é erro de conexão com banco
+    if (
+      error.message.includes("ENOTFOUND") ||
+      error.message.includes("ECONNREFUSED")
+    ) {
+      return res.status(503).json({
+        message: "Database temporarily unavailable. Please try again later.",
+      });
+    }
     res.status(500).json({ message: "Server error", error: error.message }); // Erro interno
   }
 };
@@ -37,7 +47,7 @@ export const register = async (req, res) => {
  * Controller para login de usuários.
  * Verifica credenciais, gera token JWT se válidas.
  * Retorna token para autenticação futura ou erro se inválidas.
- * Usado pela rota POST /api/auth/login.
+ * Usado pela rota POST /auth/login.
  * @param {Object} req - Requisição com email e password no body
  * @param {Object} res - Resposta Express
  */
@@ -59,6 +69,16 @@ export const login = async (req, res) => {
 
     res.json({ message: "Login successful", token }); // Retorna token
   } catch (error) {
+    console.error("Login error:", error.message);
+    // Verifica se é erro de conexão com banco
+    if (
+      error.message.includes("ENOTFOUND") ||
+      error.message.includes("ECONNREFUSED")
+    ) {
+      return res.status(503).json({
+        message: "Database temporarily unavailable. Please try again later.",
+      });
+    }
     res.status(500).json({ message: "Server error", error: error.message }); // Erro interno
   }
 };
@@ -67,7 +87,7 @@ export const login = async (req, res) => {
  * Controller para obter perfil do usuário autenticado.
  * Usa o ID do usuário do token JWT para buscar dados seguros.
  * Retorna dados do usuário ou erro se não encontrado.
- * Usado pela rota GET /api/auth/profile (protegida).
+ * Usado pela rota GET /auth/profile (protegida).
  * @param {Object} req - Requisição com req.user definido pelo middleware
  * @param {Object} res - Resposta Express
  */
@@ -79,7 +99,16 @@ export const getProfile = async (req, res) => {
     }
     res.json({ user }); // Retorna dados do usuário
   } catch (error) {
+    console.error("Get profile error:", error.message);
+    // Verifica se é erro de conexão com banco
+    if (
+      error.message.includes("ENOTFOUND") ||
+      error.message.includes("ECONNREFUSED")
+    ) {
+      return res.status(503).json({
+        message: "Database temporarily unavailable. Please try again later.",
+      });
+    }
     res.status(500).json({ message: "Server error", error: error.message }); // Erro interno
   }
 };
-  

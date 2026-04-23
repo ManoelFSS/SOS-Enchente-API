@@ -2,7 +2,7 @@
  * Definição das rotas de autenticação.
  * Organiza as rotas relacionadas a auth em um router separado.
  * Aplica middlewares de validação e autenticação conforme necessário.
- * Usado pelo servidor principal para prefixar com /api/auth.
+ * Usado pelo servidor principal para prefixar com /auth.
  */
 
 import express from "express"; // Framework Express para criar rotas

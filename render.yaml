@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: sos-enchente-api
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromSecret: database_url
+      - key: JWT_SECRET
+        fromSecret: jwt_secret
