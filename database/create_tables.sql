@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS donations (
   photo_url VARCHAR(500),
   city VARCHAR(100) NOT NULL,
   status VARCHAR(50) DEFAULT 'available',
+  cep VARCHAR(20),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -56,6 +57,7 @@ CREATE TABLE IF NOT EXISTS donation_requests (
   quantity VARCHAR(100) NOT NULL,
   urgency VARCHAR(50) NOT NULL,
   city VARCHAR(100) NOT NULL,
+  cep VARCHAR(20),
   status VARCHAR(50) DEFAULT 'open',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -64,4 +66,5 @@ CREATE INDEX IF NOT EXISTS idx_requests_user_id ON donation_requests(user_id);
 CREATE INDEX IF NOT EXISTS idx_requests_category ON donation_requests(category);
 CREATE INDEX IF NOT EXISTS idx_requests_city ON donation_requests(city);
 CREATE INDEX IF NOT EXISTS idx_requests_urgency ON donation_requests(urgency);
-CREATE INDEX IF NOT_EXISTS idx_requests_status ON donation_requests(status);
+CREATE INDEX IF NOT EXISTS idx_requests_status ON donation_requests(status);
+CREATE INDEX IF NOT EXISTS idx_requests_cep ON donation_requests(cep);
