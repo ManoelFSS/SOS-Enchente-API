@@ -42,6 +42,7 @@ const createTables = () => {
       quantity TEXT NOT NULL,
       photo_url TEXT,
       city TEXT NOT NULL,
+      cep TEXT,
       status TEXT DEFAULT 'available',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
@@ -58,6 +59,7 @@ const createTables = () => {
       quantity TEXT NOT NULL,
       urgency TEXT DEFAULT 'medium',
       city TEXT NOT NULL,
+      cep TEXT,
       status TEXT DEFAULT 'open',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
