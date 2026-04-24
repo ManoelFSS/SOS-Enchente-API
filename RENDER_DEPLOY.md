@@ -88,10 +88,10 @@ curl -X POST https://sos-enchente-api.onrender.com/auth/login \
   }'
 ```
 
-### Criar Pedido (com token JWT)
+### Criar Doação (com token JWT)
 
 ```bash
-curl -X POST https://sos-enchente-api.onrender.com/pedidos \
+curl -X POST https://sos-enchente-api.onrender.com/donations \
   -H "Authorization: Bearer SEU_TOKEN_AQUI" \
   -H "Content-Type: application/json" \
   -d '{

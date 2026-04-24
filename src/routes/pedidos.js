@@ -1,6 +1,6 @@
 /**
- * Rotas para gerenciamento de Requisições de Doação.
- * Define endpoints para CRUD de requisições.
+ * Rotas para gerenciamento de Pedidos de Doação.
+ * Define endpoints para CRUD de pedidos.
  * Todas as rotas de modificação requerem autenticação.
  */
 
@@ -22,25 +22,25 @@ import {
 
 const router = express.Router();
 
-// Rota para criar requisição (protegida - requer autenticação e validação)
+// Rota para criar pedido (protegida - requer autenticação e validação)
 router.post("/", authenticateToken, validateRequest, createRequest);
 
-// Rota para listar requisições do usuário autenticado (protegida - deve vir ANTES de /:id)
-router.get("/my-requests", authenticateToken, getMyRequests);
+// Rota para listar pedidos do usuário autenticado (protegida - deve vir ANTES de /:id)
+router.get("/my-pedidos", authenticateToken, getMyRequests);
 
-// Rota para listar requisições críticas de uma cidade (pública - deve vir ANTES de /:id)
+// Rota para listar pedidos críticos de uma cidade (pública - deve vir ANTES de /:id)
 router.get("/critical/:city", getCriticalRequests);
 
-// Rota para listar todas as requisições (pública)
+// Rota para listar todos os pedidos (pública)
 router.get("/", listRequests);
 
-// Rota para obter uma requisição específica (pública)
+// Rota para obter um pedido específico (pública)
 router.get("/:id", getRequest);
 
-// Rota para atualizar requisição (protegida - apenas solicitante pode atualizar)
+// Rota para atualizar pedido (protegida - apenas solicitante pode atualizar)
 router.put("/:id", authenticateToken, validateRequestUpdate, updateRequest);
 
-// Rota para deletar requisição (protegida - apenas solicitante pode deletar)
+// Rota para deletar pedido (protegida - apenas solicitante pode deletar)
 router.delete("/:id", authenticateToken, deleteRequest);
 
 export default router;
